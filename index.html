@@ -466,7 +466,7 @@
       <span class="nav-sub">Boulangerie &amp; Pâtisserie</span>
     </div>
     <div class="nav-right">
-      <span class="nav-badge">Nantes · Sur commande</span>
+      <span class="nav-badge">Nantes</span>
       <a href="tel:0981724522" class="nav-tel">09 81 72 45 22</a>
     </div>
   </nav>
@@ -513,9 +513,9 @@
           <h3 class="spec-title">Pâtisserie française</h3>
           <div class="spec-sep"></div>
           <ul class="spec-items">
-            <li>Éclairs &amp; choux</li>
-            <li>Entremets &amp; trompe-l'œil</li>
-            <li>Pâtisserie sèche de qualité</li>
+            <li>Mille-feuilles &amp; tarte citron</li>
+            <li>Entremets &amp; layer cakes</li>
+            <li>Petits fours &amp; mignardises</li>
           </ul>
         </article>
         <article class="spec-card" data-reveal data-card>
@@ -538,7 +538,7 @@
       <span class="section-label">Sur mesure</span>
       <h2>Vos occasions méritent<br>le meilleur</h2>
       <div class="cmd-sep"></div>
-      <p class="cmd-body">Pièces montées, plateaux orientaux, gâteaux d'anniversaire sur mesure.</p>
+      <p class="cmd-body">Pièces montées, plateaux orientaux, gâteaux d'anniversaire sur mesure...</p>
       <div class="cmd-infos">
         <div class="cmd-info-col">
           <h4>Retrait en boutique</h4>
@@ -589,6 +589,37 @@
   </footer>
 
   <script>
+    // Click-to-copy téléphone sur desktop (non tactile)
+    const TEL = '09 81 72 45 22';
+    const isTouch = () => window.matchMedia('(hover: none)').matches;
+    function showToast(msg) {
+      let t = document.getElementById('tel-toast');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'tel-toast';
+        Object.assign(t.style, {
+          position:'fixed', bottom:'32px', left:'50%', transform:'translateX(-50%)',
+          background:'#C9A260', color:'#080808', fontFamily:"'Inter',sans-serif",
+          fontWeight:'400', fontSize:'14px', letterSpacing:'0.06em',
+          padding:'12px 28px', borderRadius:'3px', zIndex:'999',
+          transition:'opacity 0.3s ease', opacity:'0', pointerEvents:'none'
+        });
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.opacity = '1';
+      clearTimeout(t._hide);
+      t._hide = setTimeout(() => t.style.opacity = '0', 2200);
+    }
+    document.querySelectorAll('a[href="tel:0981724522"]').forEach(a => {
+      a.addEventListener('click', function(e) {
+        if (!isTouch()) {
+          e.preventDefault();
+          navigator.clipboard.writeText(TEL).then(() => showToast('📋 ' + TEL + ' copié !'));
+        }
+      });
+    });
+
     // Smooth scroll pour les boutons hero (contourne le bug overflow-x sur body)
     document.querySelectorAll('a[href^="#"]').forEach(a => {
       a.addEventListener('click', function(e) {
