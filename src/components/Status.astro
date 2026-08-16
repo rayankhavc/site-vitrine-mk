@@ -1,0 +1,18 @@
+---
+import type { Hours } from "../data/bakeries";
+
+interface Props { hours: Hours; class?: string }
+const { hours, class: className = "" } = Astro.props;
+
+// Rendu masqué puis dévoilé par le JS : évite d'afficher "Ouvert" à tort
+// si le JavaScript ne s'exécute pas.
+---
+
+<span
+  class={`status ${className}`}
+  data-hours={JSON.stringify(hours)}
+  hidden
+>
+  <span class="status-dot"></span>
+  <span class="status-text"></span>
+</span>
