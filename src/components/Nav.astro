@@ -1,0 +1,127 @@
+---
+import type { Bakery } from "../data/bakeries";
+import Status from "./Status.astro";
+import { SITE } from "../data/bakeries";
+
+interface Props { bakery?: Bakery }
+const { bakery } = Astro.props;
+---
+
+<nav class="nav-anim">
+  <div class="nav-inner">
+    <div class="nav-left">
+      {bakery ? (
+        <>
+          <a href={`/${bakery.slug}`} class="logo serif">
+            {bakery.logo.before}<span class="logo-accent">{bakery.logo.accent}</span>{bakery.logo.after}
+          </a>
+          <Status hours={bakery.hours} class="nav-status" />
+        </>
+      ) : (
+        <a href="/" class="logo serif">
+          MK <span class="logo-accent">Boulangeries</span>
+        </a>
+      )}
+    </div>
+
+    <div class="nav-right">
+      <a href="/" class="nav-link">
+        <span class="nav-link-long">{bakery ? "Nos 3 boulangeries" : "Nos boulangeries"}</span>
+        <span class="nav-link-short">Les 3</span>
+      </a>
+      {bakery && (
+        <a
+          href={bakery.phoneHref}
+          class="nav-tel"
+          data-shop={bakery.slug}
+          data-phone={bakery.phone}
+        >
+          {bakery.phone}
+        </a>
+      )}
+    </div>
+  </div>
+</nav>
+
+<style>
+  @keyframes navFade { from { opacity: 0; } to { opacity: 1; } }
+  .nav-anim { animation: navFade 0.4s ease-out both; }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    background: rgba(14, 19, 16, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .nav-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
+  .nav-right { display: flex; align-items: center; gap: 22px; }
+
+  .logo {
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+  }
+  .logo-accent { color: var(--accent); font-style: italic; }
+
+  /* `Status` est un composant enfant : les styles scopés d'Astro ne
+     l'atteignent pas, il faut viser sa classe en global. */
+  :global(.nav-status) {
+    border-left: 1px solid var(--line);
+    padding-left: 16px;
+    white-space: nowrap;
+  }
+
+  .nav-link {
+    font-size: 14px;
+    color: var(--muted);
+    transition: color 0.2s ease-out;
+  }
+  .nav-link:hover { color: var(--ink); }
+
+  .nav-tel {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    transition: background 0.25s ease-out, color 0.25s ease-out;
+  }
+  .nav-tel:hover { background: var(--accent); color: var(--bg-deep); }
+
+  .nav-link-short { display: none; }
+
+  @media (max-width: 980px) {
+    :global(.nav-status) { display: none; }
+  }
+  @media (max-width: 780px) {
+    /* Le numéro vit dans la barre collante en bas : pas de doublon ici. */
+    .nav-tel { display: none; }
+  }
+  @media (max-width: 600px) {
+    .nav-inner { padding: 13px 18px; gap: 14px; }
+    .logo {
+      font-size: 17px;
+      /* Un nom long ne doit jamais pousser le lien hors de l'écran. */
+      white-space: normal;
+      line-height: 1.25;
+    }
+    .nav-link { font-size: 13px; white-space: nowrap; }
+    .nav-link-long { display: none; }
+    .nav-link-short { display: inline; }
+  }
+</style>
