@@ -327,12 +327,12 @@ const canonicalUrl = new URL(canonical, SITE.domain).href;
 
       e.preventDefault();
       const number = link.getAttribute("href")!.replace("tel:", "");
-      const pretty = link.dataset.phone ?? number;
+      const shown = link.dataset.phone ?? number;
       try {
-        await navigator.clipboard.writeText(pretty);
-        showToast("Numéro copié : " + pretty);
+        await navigator.clipboard.writeText(shown);
+        showToast("Numéro copié : " + shown);
       } catch {
-        showToast("Appelez-nous au " + pretty);
+        showToast("Appelez-nous au " + shown);
       }
     });
   });
