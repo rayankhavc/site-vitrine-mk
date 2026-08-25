@@ -45,8 +45,14 @@ npm run preview  # sert le build
 src/data/bakeries.ts     source unique de vérité (les 3 boutiques)
 src/layouts/Base.astro   <head>, styles globaux, JS partagé
 src/components/          Nav, Footer, Status (ouvert/fermé), CallBar
+src/data/products.ts     catalogue produits et questions fréquentes
 src/pages/index.astro    accueil : choix de la boulangerie
 src/pages/[slug].astro   une page par boulangerie, générée depuis les données
+src/pages/nos-produits.astro   catalogue complet
+src/pages/commandes.astro      commandes sur mesure et délais
+src/pages/faq.astro            questions fréquentes (données FAQPage)
+src/assets/photos/       photos sources, converties en WebP au build
+public/llms.txt          résumé factuel du site pour les assistants IA
 ```
 
 ## Choix techniques
@@ -63,15 +69,31 @@ src/pages/[slug].astro   une page par boulangerie, générée depuis les donnée
   d'apparition ne s'activent que si le JS tourne.
 - **Données structurées `Bakery`** par boutique, avec adresse et horaires
   dérivés automatiquement des données.
-- **Suivi des conversions** : les clics « Appeler » et « Itinéraire » sont
-  envoyés à Google Analytics (`appel_telephone`, `itineraire`) avec le nom
-  de la boulangerie, pour mesurer ce que le site rapporte réellement.
+- **Suivi des conversions** : les clics « Appeler », « Itinéraire » et
+  « Écrire » sont envoyés à Google Analytics (`appel_telephone`,
+  `itineraire`, `message_ecrit`) avec le nom de la boulangerie, pour
+  mesurer ce que le site rapporte réellement.
+- **Commandes écrites** : boutons WhatsApp et SMS avec message pré-rempli,
+  vers le 07 82 29 74 51. Beaucoup de clients n'osent pas appeler.
+- **Transitions de page natives** (View Transitions), parallaxe sur les
+  images de héros et révélation des images au défilement. Tout est
+  désactivé si le visiteur a demandé moins d'animations, et la parallaxe
+  ne s'active qu'au-delà de 900 px de large pour ne pas coûter d'images
+  par seconde sur mobile.
+- **Coordonnées GPS réelles** relevées sur OpenStreetMap, présentes dans
+  les données structurées de chaque boutique.
 
 ## Ce qui reste à faire
 
-1. **Photos** — le site est construit pour les recevoir. C'est le premier
-   facteur de conversion sur un site de boulangerie.
-2. **Fiches Google Business Profile** — le principal levier d'acquisition,
+1. **Les prix.** Le catalogue produits est volontairement sans prix : ils ne
+   m'ont pas été communiqués, et un prix inventé se retourne contre la
+   boutique au premier client. Le champ `price` de `src/data/products.ts`
+   est prêt à les recevoir.
+2. **Photos réelles** — voir `PHOTOS.md`. Les images actuelles sont des
+   photos d'ambiance libres de droit, pas les produits de la maison.
+3. **Fiches Google Business Profile** — le principal levier d'acquisition,
    davantage que le site lui-même. Notamment celle du Fournil du Sud, qui a
    très peu d'avis.
-3. **Domaine** `mkboulangeries.fr` à réserver et brancher sur Vercel.
+4. **Domaine** `mkboulangeries.fr` à réserver et brancher sur Vercel. Tant
+   qu'il n'existe pas, les balises `canonical` pointent vers une adresse
+   introuvable et le référencement ne peut pas démarrer.

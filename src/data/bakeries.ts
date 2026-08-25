@@ -6,15 +6,24 @@
  * fichier, et seulement ce fichier. Le reste du site se met à jour tout
  * seul (pages, plans, données Google, footer, horaires en temps réel).
  *
- * ⚠ À FAIRE VALIDER : le n° de rue du Fournil du Sud (1 Bd Salvador
- * Allende) vient d'un annuaire, pas de la fiche Google. À confirmer.
+ * Les coordonnées GPS ont été relevées sur OpenStreetMap au numéro de rue
+ * près : elles servent aux données structurées et aux itinéraires, une
+ * approximation enverrait des clients au mauvais endroit.
  */
+
+import type { ImageMetadata } from "astro";
+import painsRustiques from "../assets/photos/pains-rustiques.jpg";
+import baguettesPapier from "../assets/photos/baguettes-papier.jpg";
+import croissantFarine from "../assets/photos/croissant-farine.jpg";
 
 export const SITE = {
   name: "MK Boulangeries",
   domain: "https://mkboulangeries.fr",
   ga: "G-MFFMYTCF6R",
   legalName: "MK",
+  /** Ligne mobile qui reçoit les commandes écrites (WhatsApp et SMS). */
+  contactMobile: "07 82 29 74 51",
+  contactWhatsApp: "33782297451",
 };
 
 /** Horaires communs aux 3 boutiques : 6h–20h, fermé le vendredi. */
@@ -41,11 +50,16 @@ export type Bakery = {
   postalCode: string;
   phone: string;
   phoneHref: string;
+  geo: { lat: number; lng: number };
   /** Accent couleur propre à la boutique. */
   accent: string;
   accentSoft: string;
   tagline: string;
   intro: string;
+  /** Texte propre au quartier : c'est lui qui fait ranker la page. */
+  neighbourhood: string;
+  hero: ImageMetadata;
+  heroAlt: string;
   hours: Hours;
   specialties: { title: string; desc: string; tag: string }[];
   /** Fiche Google Business Profile — lien vers les avis, jamais figés en dur. */
@@ -64,16 +78,21 @@ export const bakeries: Bakery[] = [
     name: "MK Boulangerie & Pâtisserie",
     logo: { before: "MK ", accent: "Boulangerie", after: " & Pâtisserie" },
     city: "Nantes",
-    district: "Nantes Nord · Corps de Garde",
+    district: "Dervallières – Zola",
     street: "51 Rue du Corps de Garde",
     postalCode: "44100",
     phone: "09 81 72 45 22",
     phoneHref: "tel:0981724522",
+    geo: { lat: 47.2129456, lng: -1.5976006 },
     accent: "#C9A260",
     accentSoft: "#E2B97A",
     tagline: "La maison de Nantes",
     intro:
       "Notre boulangerie nantaise, rue du Corps de Garde. Pains cuits tout au long de la journée, pâtisseries maison et formules du midi à emporter.",
+    neighbourhood:
+      "Rue du Corps de Garde, dans le quartier des Dervallières – Zola, à l'ouest de Nantes. Une boulangerie de quartier au sens propre : on y vient à pied, le matin avant le travail ou en fin de journée, et le pain sort du four toute la journée plutôt qu'en une seule fournée.",
+    hero: painsRustiques,
+    heroAlt: "Pains de campagne et épis de blé sur un plan de travail fariné",
     hours: HORAIRES_STANDARD,
     specialties: [
       {
@@ -100,16 +119,21 @@ export const bakeries: Bakery[] = [
     name: "Au Fournil du Sillon",
     logo: { before: "Au ", accent: "Fournil", after: " du Sillon" },
     city: "Saint-Herblain",
-    district: "Les Thébaudières",
+    district: "Les Thébaudières · Sillon de Bretagne",
     street: "13 Place des Thébaudières",
     postalCode: "44800",
     phone: "09 73 60 10 07",
     phoneHref: "tel:0973601007",
+    geo: { lat: 47.2441206, lng: -1.6062359 },
     accent: "#C97B4A",
     accentSoft: "#E09A68",
     tagline: "Place des Thébaudières",
     intro:
       "Au cœur des Thébaudières, une boulangerie de quartier ouverte dès 6h. Pains, viennoiseries et pâtisseries orientales préparés maison.",
+    neighbourhood:
+      "Place des Thébaudières, au pied du Sillon de Bretagne — le quartier qui donne son nom à la boulangerie. On ouvre à 6h pour ceux qui partent tôt, et la place reste le passage obligé du quartier toute la journée.",
+    hero: baguettesPapier,
+    heroAlt: "Baguettes de tradition dans leur sachet papier, en sortie de four",
     hours: HORAIRES_STANDARD,
     specialties: [
       {
@@ -136,16 +160,21 @@ export const bakeries: Bakery[] = [
     name: "Au Fournil du Sud",
     logo: { before: "Au ", accent: "Fournil", after: " du Sud" },
     city: "Saint-Herblain",
-    district: "Bd Salvador Allende",
+    district: "La Harlière · Bd Salvador Allende",
     street: "1 Boulevard Salvador Allende",
     postalCode: "44800",
     phone: "02 28 03 12 42",
     phoneHref: "tel:0228031242",
+    geo: { lat: 47.2144688, lng: -1.6084201 },
     accent: "#5AAF7E",
     accentSoft: "#6CC090",
     tagline: "Au sud de Saint-Herblain",
     intro:
       "Boulangerie, pâtisserie et snacking au sud de Saint-Herblain. Pâtisseries orientales, pains artisanaux et formules du midi.",
+    neighbourhood:
+      "Boulevard Salvador Allende, dans le quartier de la Harlière, au sud de Saint-Herblain. La boutique la plus tournée vers le snacking des trois : sandwichs, paninis et pizzas préparés sur place pour la pause du midi.",
+    hero: croissantFarine,
+    heroAlt: "Croissant pur beurre saupoudré de farine sur une ardoise sombre",
     hours: HORAIRES_STANDARD,
     specialties: [
       {
@@ -169,14 +198,14 @@ export const bakeries: Bakery[] = [
   },
 ];
 
+export const getBakery = (slug: string) =>
+  bakeries.find((b) => b.slug === slug)!;
+
 /** "06:00" → "6h", "07:30" → "7h30" : on écrit l'heure comme on la dit. */
 export function prettyTime(hhmm: string): string {
   const [h, m] = hhmm.split(":").map(Number);
   return m === 0 ? `${h}h` : `${h}h${String(m).padStart(2, "0")}`;
 }
-
-export const getBakery = (slug: string) =>
-  bakeries.find((b) => b.slug === slug)!;
 
 /** `openingHours` au format schema.org, dérivé des horaires ci-dessus. */
 export function schemaHours(hours: Hours): string[] {
@@ -184,4 +213,15 @@ export function schemaHours(hours: Hours): string[] {
   return hours
     .map((h, i) => (h.open ? `${codes[i]} ${h.open}-${h.close}` : null))
     .filter((v): v is string => v !== null);
+}
+
+/** Lien WhatsApp avec message pré-rempli. */
+export function whatsappUrl(message: string): string {
+  return `https://wa.me/${SITE.contactWhatsApp}?text=${encodeURIComponent(message)}`;
+}
+
+/** Lien SMS pré-rempli, en repli pour qui n'a pas WhatsApp. */
+export function smsUrl(message: string): string {
+  const number = "+" + SITE.contactWhatsApp;
+  return `sms:${number}?&body=${encodeURIComponent(message)}`;
 }

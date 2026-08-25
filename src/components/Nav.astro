@@ -1,10 +1,16 @@
 ---
 import type { Bakery } from "../data/bakeries";
 import Status from "./Status.astro";
-import { SITE } from "../data/bakeries";
 
-interface Props { bakery?: Bakery }
-const { bakery } = Astro.props;
+interface Props { bakery?: Bakery; current?: string }
+const { bakery, current } = Astro.props;
+
+const links = [
+  { href: "/", label: "Nos boulangeries", key: "accueil" },
+  { href: "/nos-produits", label: "Nos produits", key: "produits" },
+  { href: "/commandes", label: "Commandes", key: "commandes" },
+  { href: "/faq", label: "Questions", key: "faq" },
+];
 ---
 
 <nav class="nav-anim">
@@ -18,27 +24,33 @@ const { bakery } = Astro.props;
           <Status hours={bakery.hours} class="nav-status" />
         </>
       ) : (
-        <a href="/" class="logo serif">
-          MK <span class="logo-accent">Boulangeries</span>
-        </a>
+        <a href="/" class="logo serif">MK <span class="logo-accent">Boulangeries</span></a>
       )}
     </div>
 
     <div class="nav-right">
-      <a href="/" class="nav-link">
-        <span class="nav-link-long">{bakery ? "Nos 3 boulangeries" : "Nos boulangeries"}</span>
-        <span class="nav-link-short">Les 3</span>
-      </a>
+      <div class="nav-links">
+        {links.map((l) => (
+          <a href={l.href} class={`nav-link ${current === l.key ? "is-current" : ""}`}>{l.label}</a>
+        ))}
+      </div>
+
       {bakery && (
-        <a
-          href={bakery.phoneHref}
-          class="nav-tel"
-          data-shop={bakery.slug}
-          data-phone={bakery.phone}
-        >
+        <a href={bakery.phoneHref} class="nav-tel" data-shop={bakery.slug} data-phone={bakery.phone}>
           {bakery.phone}
         </a>
       )}
+
+      <details class="nav-menu">
+        <summary aria-label="Ouvrir le menu">
+          <span class="burger" aria-hidden="true"><i></i><i></i><i></i></span>
+        </summary>
+        <div class="nav-menu-panel">
+          {links.map((l) => (
+            <a href={l.href} class={current === l.key ? "is-current" : ""}>{l.label}</a>
+          ))}
+        </div>
+      </details>
     </div>
   </div>
 </nav>
@@ -51,9 +63,16 @@ const { bakery } = Astro.props;
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 50;
-    background: rgba(14, 19, 16, 0.92);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--line);
+    background: rgba(14, 19, 16, 0.82);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: background 0.3s ease-out, border-color 0.3s ease-out;
+  }
+  /* La nav ne se dessine qu'une fois la page défilée : au repos elle
+     laisse le hero respirer. */
+  nav.is-scrolled {
+    background: rgba(14, 19, 16, 0.95);
+    border-bottom-color: var(--line);
   }
   .nav-inner {
     max-width: 1200px;
@@ -62,17 +81,16 @@ const { bakery } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
+    gap: 20px;
+    transition: padding 0.3s ease-out;
   }
+  nav.is-scrolled .nav-inner { padding-top: 11px; padding-bottom: 11px; }
+
   .nav-left { display: flex; align-items: center; gap: 16px; min-width: 0; }
   .nav-right { display: flex; align-items: center; gap: 22px; }
+  .nav-links { display: flex; align-items: center; gap: 22px; }
 
-  .logo {
-    font-size: 21px;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    white-space: nowrap;
-  }
+  .logo { font-size: 21px; font-weight: 600; letter-spacing: 0.4px; white-space: nowrap; }
   .logo-accent { color: var(--accent); font-style: italic; }
 
   /* `Status` est un composant enfant : les styles scopés d'Astro ne
@@ -84,11 +102,25 @@ const { bakery } = Astro.props;
   }
 
   .nav-link {
+    position: relative;
     font-size: 14px;
     color: var(--muted);
+    white-space: nowrap;
     transition: color 0.2s ease-out;
   }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -6px;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  }
   .nav-link:hover { color: var(--ink); }
+  .nav-link:hover::after, .nav-link.is-current::after { transform: scaleX(1); }
+  .nav-link.is-current { color: var(--ink); }
 
   .nav-tel {
     display: inline-flex;
@@ -99,29 +131,64 @@ const { bakery } = Astro.props;
     font-weight: 500;
     border: 1px solid var(--accent);
     border-radius: 3px;
+    white-space: nowrap;
     transition: background 0.25s ease-out, color 0.25s ease-out;
   }
   .nav-tel:hover { background: var(--accent); color: var(--bg-deep); }
 
-  .nav-link-short { display: none; }
+  /* ── Menu mobile, en <details> : fonctionne sans JavaScript ── */
+  .nav-menu { display: none; position: relative; }
+  .nav-menu summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px; height: 44px;
+    margin-right: -8px;
+  }
+  .nav-menu summary::-webkit-details-marker { display: none; }
+  .burger { display: flex; flex-direction: column; gap: 5px; width: 22px; }
+  .burger i { display: block; height: 1.5px; background: var(--ink); border-radius: 2px; transition: transform 0.25s ease-out, opacity 0.2s ease-out; }
+  .nav-menu[open] .burger i:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-menu[open] .burger i:nth-child(2) { opacity: 0; }
+  .nav-menu[open] .burger i:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-  @media (max-width: 980px) {
+  .nav-menu-panel {
+    position: absolute;
+    right: -8px;
+    top: calc(100% + 12px);
+    min-width: 210px;
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  }
+  .nav-menu-panel a {
+    padding: 15px 20px;
+    font-size: 15px;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-menu-panel a:last-child { border-bottom: none; }
+  .nav-menu-panel a.is-current { color: var(--accent); }
+
+  @media (max-width: 1080px) {
     :global(.nav-status) { display: none; }
+  }
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .nav-menu { display: block; }
   }
   @media (max-width: 780px) {
     /* Le numéro vit dans la barre collante en bas : pas de doublon ici. */
     .nav-tel { display: none; }
   }
   @media (max-width: 600px) {
-    .nav-inner { padding: 13px 18px; gap: 14px; }
-    .logo {
-      font-size: 17px;
-      /* Un nom long ne doit jamais pousser le lien hors de l'écran. */
-      white-space: normal;
-      line-height: 1.25;
-    }
-    .nav-link { font-size: 13px; white-space: nowrap; }
-    .nav-link-long { display: none; }
-    .nav-link-short { display: inline; }
+    .nav-inner { padding: 13px 18px; gap: 12px; }
+    .logo { font-size: 17px; white-space: normal; line-height: 1.25; }
   }
 </style>

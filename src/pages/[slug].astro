@@ -1,10 +1,13 @@
 ---
+import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Status from "../components/Status.astro";
 import CallBar from "../components/CallBar.astro";
+import MessageButtons from "../components/MessageButtons.astro";
 import { bakeries, SITE, schemaHours, prettyTime, type Bakery } from "../data/bakeries";
+import quartierImg from "../assets/photos/vitrine-pains.jpg";
 
 export function getStaticPaths() {
   return bakeries.map((b) => ({ params: { slug: b.slug }, props: { bakery: b } }));
@@ -35,10 +38,13 @@ const jsonLd = {
     addressLocality: bakery.city,
     addressCountry: "FR",
   },
+  geo: { "@type": "GeoCoordinates", latitude: bakery.geo.lat, longitude: bakery.geo.lng },
+  hasMap: bakery.mapsUrl,
   areaServed: bakery.city,
   openingHours: schemaHours(bakery.hours),
   servesCuisine: ["Boulangerie", "Pâtisserie", "Snacking"],
   priceRange: "€",
+  currenciesAccepted: "EUR",
 };
 ---
 
@@ -53,8 +59,19 @@ const jsonLd = {
   <Nav bakery={bakery} />
 
   <header class="hero">
+    <div class="hero-media" data-parallax="0.18">
+      <Image
+        src={bakery.hero}
+        alt={bakery.heroAlt}
+        widths={[760, 1200, 1800]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
     <div class="hero-overlay"></div>
-    <div class="hero-content">
+
+    <div class="hero-content" id="contenu">
       <span class="hero-badge">Boulangerie · Pâtisserie · Snacking</span>
       <h1 class="serif">
         <span class="hero-word" style="animation-delay:.05s">{bakery.logo.before.trim()}</span>
@@ -64,25 +81,40 @@ const jsonLd = {
       <p class="hero-address">{bakery.street} · {bakery.postalCode} {bakery.city}</p>
       <Status hours={bakery.hours} class="hero-status" />
       <div class="hero-ctas">
-        <a
-          href={bakery.phoneHref}
-          class="btn-primary"
-          data-shop={bakery.slug}
-          data-phone={bakery.phone}
-        >Appeler le {bakery.phone}</a>
-        <a
-          href={bakery.mapsUrl}
-          target="_blank"
-          rel="noopener"
-          class="btn-outline"
-          data-itineraire={bakery.slug}
-        >Itinéraire</a>
+        <a href={bakery.phoneHref} class="btn-primary" data-shop={bakery.slug} data-phone={bakery.phone}>
+          Appeler le {bakery.phone}
+        </a>
+        <a href={bakery.mapsUrl} target="_blank" rel="noopener" class="btn-outline" data-itineraire={bakery.slug}>
+          Itinéraire
+        </a>
       </div>
     </div>
   </header>
 
   <section class="intro">
     <p data-reveal>{bakery.intro}</p>
+  </section>
+
+  <section class="quartier">
+    <div class="quartier-inner">
+      <div class="quartier-media" data-reveal-img>
+        <Image
+          src={quartierImg}
+          alt="Étalage de pains et de baguettes dans une boulangerie"
+          widths={[600, 1000]}
+          sizes="(max-width: 900px) 100vw, 500px"
+          loading="lazy"
+        />
+      </div>
+      <div class="quartier-text" data-reveal>
+        <span class="surtitre">Le quartier</span>
+        <h2 class="serif">{bakery.tagline}</h2>
+        <p>{bakery.neighbourhood}</p>
+        <a href={bakery.mapsUrl} target="_blank" rel="noopener" class="btn-outline" data-itineraire={bakery.slug}>
+          Voir sur le plan
+        </a>
+      </div>
+    </div>
   </section>
 
   <section id="specialites" class="specialites">
@@ -100,19 +132,30 @@ const jsonLd = {
         </article>
       ))}
     </div>
+    <p class="specialites-more" data-reveal>
+      <a href="/nos-produits" class="btn-outline">Voir tout le catalogue</a>
+    </p>
   </section>
 
   <section class="commande">
     <div class="commande-inner" data-reveal>
       <span class="diamond"></span>
       <h2 class="serif">Commander pour une occasion</h2>
-      <p>Gâteaux d'anniversaire, plateaux pâtisserie, commandes sur mesure : appelez-nous&nbsp;!</p>
-      <a
-        href={bakery.phoneHref}
-        class="btn-primary"
-        data-shop={bakery.slug}
-        data-phone={bakery.phone}
-      >Appeler pour commander</a>
+      <p>
+        Gâteaux d'anniversaire, plateaux de pâtisseries, commandes sur mesure.
+        Appelez la boutique, ou écrivez-nous pour détailler tranquillement.
+      </p>
+      <div class="commande-actions">
+        <a href={bakery.phoneHref} class="btn-primary" data-shop={bakery.slug} data-phone={bakery.phone}>
+          Appeler la boulangerie
+        </a>
+      </div>
+      <MessageButtons
+        message={`Bonjour, je souhaite passer une commande à ${bakery.name} (${bakery.street}).`}
+        shop={bakery.slug}
+        compact
+      />
+      <a href="/commandes" class="commande-link">Comment ça se passe, les délais →</a>
     </div>
   </section>
 
@@ -136,29 +179,19 @@ const jsonLd = {
 
       <div class="find-card" data-reveal style="transition-delay:.1s">
         <span class="surtitre">Nous trouver</span>
-        <h3 class="serif info-title">{bakery.tagline}</h3>
+        <h3 class="serif info-title">{bakery.district}</h3>
         <p class="find-street">{bakery.street}</p>
         <p class="find-city">{bakery.postalCode} {bakery.city}</p>
-        <a
-          href={bakery.phoneHref}
-          class="find-phone serif"
-          data-shop={bakery.slug}
-          data-phone={bakery.phone}
-        >{bakery.phone}</a>
+        <a href={bakery.phoneHref} class="find-phone serif" data-shop={bakery.slug} data-phone={bakery.phone}>
+          {bakery.phone}
+        </a>
         <div class="find-actions">
-          <a
-            href={bakery.mapsUrl}
-            target="_blank"
-            rel="noopener"
-            class="btn-outline btn-sm"
-            data-itineraire={bakery.slug}
-          >Ouvrir dans Google Maps</a>
-          <a
-            href={bakery.googleReviewsUrl}
-            target="_blank"
-            rel="noopener"
-            class="find-reviews"
-          >Voir les avis Google →</a>
+          <a href={bakery.mapsUrl} target="_blank" rel="noopener" class="btn-outline btn-sm" data-itineraire={bakery.slug}>
+            Ouvrir dans Google Maps
+          </a>
+          <a href={bakery.googleReviewsUrl} target="_blank" rel="noopener" class="find-reviews">
+            Voir les avis Google →
+          </a>
         </div>
       </div>
     </div>
@@ -193,165 +226,110 @@ const jsonLd = {
     from { opacity: 0; transform: translateY(28px); }
     to { opacity: 1; transform: none; }
   }
-  .hero-word { display: inline-block; opacity: 0; animation: wordUp 0.6s ease-out forwards; }
+  .hero-word { display: inline-block; opacity: 0; animation: wordUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
   .hero {
     position: relative;
     overflow: hidden;
-    padding: 190px 40px 120px;
-    background-color: var(--bg);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.05' stroke-width='1'%3E%3Cpath d='M30 6 L36 24 L54 30 L36 36 L30 54 L24 36 L6 30 L24 24 Z'/%3E%3Cpath d='M30 16 L33 27 L44 30 L33 33 L30 44 L27 33 L16 30 L27 27 Z'/%3E%3Crect x='22' y='22' width='16' height='16' transform='rotate(45 30 30)'/%3E%3C/g%3E%3C/svg%3E");
-    background-size: 60px 60px;
+    padding: 200px 40px 120px;
+    background: var(--bg);
+    isolation: isolate;
   }
+  .hero-media { position: absolute; inset: -12% 0 -12% 0; z-index: -2; will-change: transform; }
+  .hero-media :global(img) { width: 100%; height: 100%; object-fit: cover; }
   .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 40%, rgba(14, 19, 16, 0) 0%, var(--bg) 78%);
-    pointer-events: none;
+    position: absolute; inset: 0; z-index: -1;
+    background:
+      radial-gradient(ellipse at 50% 45%, rgba(10, 14, 12, 0.5) 0%, rgba(10, 14, 12, 0.9) 72%),
+      linear-gradient(to bottom, rgba(14, 19, 16, 0.55) 0%, rgba(14, 19, 16, 0.2) 40%, var(--bg) 97%);
   }
   .hero-content { position: relative; max-width: 900px; margin: 0 auto; text-align: center; }
   .hero-badge {
     display: inline-block;
-    font-size: 12px;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
+    font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase;
     color: var(--accent);
-    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-    border-radius: 40px;
-    padding: 8px 22px;
-    margin-bottom: 38px;
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    background: rgba(10, 14, 12, 0.35);
+    border-radius: 40px; padding: 8px 22px; margin-bottom: 36px;
   }
   h1 {
     font-weight: 600;
     font-size: clamp(44px, 8vw, 92px);
-    line-height: 1.03;
-    letter-spacing: -0.5px;
-    margin: 0 0 24px;
+    line-height: 1.03; letter-spacing: -0.5px; margin: 0 0 24px;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.5);
   }
   .hero-italic { font-style: italic; color: var(--accent); }
-  .hero-address {
-    font-size: 14px;
-    letter-spacing: 1px;
-    color: var(--muted);
-    margin: 0 0 16px;
-  }
-  .hero-status { margin-bottom: 38px; }
+  .hero-address { font-size: 14px; letter-spacing: 1px; color: #cfc9bd; margin: 0 0 16px; }
+  .hero-status { margin-bottom: 36px; }
   .hero-ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
-  /* ── Intro ── */
-  .intro {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 0 40px 90px;
-    text-align: center;
+  .intro { max-width: 760px; margin: 0 auto; padding: 90px 40px 0; text-align: center; }
+  .intro p { font-size: 19px; line-height: 1.8; color: var(--muted); margin: 0; }
+
+  /* ── Quartier ── */
+  .quartier { padding: 90px 40px 100px; }
+  .quartier-inner {
+    max-width: 1140px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
   }
-  .intro p {
-    font-size: 19px;
-    line-height: 1.8;
-    color: var(--muted);
-    margin: 0;
-  }
+  .quartier-media { border-radius: 6px; overflow: hidden; }
+  /* height:auto est indispensable : sans lui, l'attribut height rendu
+     par Astro fige la hauteur et aspect-ratio est ignoré. */
+  .quartier-media :global(img) { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+  .quartier-text h2 { font-weight: 600; font-size: clamp(28px, 4vw, 40px); margin: 18px 0 20px; }
+  .quartier-text p { font-size: 16px; line-height: 1.8; color: var(--muted); margin: 0 0 28px; }
 
   /* ── Spécialités ── */
   .specialites { padding: 0 40px 100px; }
   .section-header { max-width: 1200px; margin: 0 auto 56px; text-align: center; }
-  .section-header h2 {
-    font-weight: 600;
-    font-size: clamp(32px, 5vw, 50px);
-    margin: 18px 0 0;
-  }
-  .cards-grid {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-  }
+  .section-header h2 { font-weight: 600; font-size: clamp(32px, 5vw, 50px); margin: 18px 0 0; }
+  .cards-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   .card {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 5px;
+    display: flex; flex-direction: column; align-items: flex-start;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
     padding: 48px 38px;
-    transition: transform 0.3s ease-out, border-color 0.3s ease-out;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease-out;
   }
-  .card:hover {
-    transform: translateY(-4px);
-    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-  }
+  .card:hover { transform: translateY(-5px); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
   .card h3 { font-size: 25px; font-weight: 600; margin: 0 0 14px; }
-  .card p {
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--muted);
-    margin: 0 0 26px;
-    flex: 1;
-  }
+  .card p { font-size: 15px; line-height: 1.7; color: var(--muted); margin: 0 0 26px; flex: 1; }
   .card-tag {
-    font-size: 12px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--accent);
-    border-bottom: 1px solid var(--accent);
-    padding-bottom: 3px;
+    font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--accent); border-bottom: 1px solid var(--accent); padding-bottom: 3px;
   }
+  .specialites-more { text-align: center; margin: 44px 0 0; }
 
   /* ── Commande ── */
   .commande { padding: 0 40px 100px; text-align: center; }
   .commande-inner {
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 64px 44px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 5px;
+    max-width: 800px; margin: 0 auto; padding: 64px 44px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    display: flex; flex-direction: column; align-items: center;
   }
-  .commande-inner h2 {
-    font-weight: 600;
-    font-size: clamp(28px, 4.4vw, 44px);
-    margin: 26px 0 18px;
+  .commande-inner h2 { font-weight: 600; font-size: clamp(28px, 4.4vw, 44px); margin: 26px 0 18px; }
+  .commande-inner > p { font-size: 16px; line-height: 1.75; color: var(--muted); margin: 0 0 30px; max-width: 52ch; }
+  .commande-actions { margin-bottom: 20px; }
+  .commande-link {
+    margin-top: 26px; font-size: 14px; color: var(--muted);
+    border-bottom: 1px solid var(--line); padding-bottom: 3px;
+    transition: color 0.2s ease-out, border-color 0.2s ease-out;
   }
-  .commande-inner p {
-    font-size: 16px;
-    line-height: 1.75;
-    color: var(--muted);
-    margin: 0 0 38px;
-  }
+  .commande-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
   /* ── Horaires + accès ── */
   .infos { padding: 0 40px 100px; }
-  .infos-grid {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: start;
-  }
-  .info-title { font-size: 29px; font-weight: 600; margin: 14px 0 30px; }
+  .infos-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+  .info-title { font-size: 28px; font-weight: 600; margin: 14px 0 30px; }
   .hours-list { display: flex; flex-direction: column; }
-  .hours-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--line);
-  }
+  .hours-row { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
   .hour-day { font-size: 15px; }
   .hour-time { font-size: 15px; font-weight: 500; }
   .hour-closed { font-size: 15px; color: var(--closed); }
   .hours-status { margin-top: 22px; }
 
   .find-card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 5px;
-    padding: 44px 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    padding: 44px 40px; display: flex; flex-direction: column; align-items: flex-start;
   }
   .find-street { font-size: 16px; line-height: 1.7; margin: 0 0 6px; }
   .find-city { font-size: 16px; line-height: 1.7; color: var(--muted); margin: 0 0 26px; }
@@ -359,55 +337,39 @@ const jsonLd = {
   .find-actions { display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
   .btn-sm { padding: 13px 26px; font-size: 14px; }
   .find-reviews {
-    font-size: 14px;
-    color: var(--muted);
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 3px;
+    font-size: 14px; color: var(--muted);
+    border-bottom: 1px solid var(--line); padding-bottom: 3px;
     transition: color 0.2s ease-out, border-color 0.2s ease-out;
   }
   .find-reviews:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
   /* ── Maillage vers les deux autres ── */
-  .others {
-    padding: 0 40px 100px;
-    border-top: 1px solid var(--line);
-    padding-top: 70px;
-  }
+  .others { padding: 70px 40px 100px; border-top: 1px solid var(--line); }
   .others-inner { max-width: 1100px; margin: 0 auto; }
-  .others-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-top: 30px;
-  }
+  .others-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
   .other-card {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    display: flex; flex-direction: column; gap: 8px;
     padding: 30px 32px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 5px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
     transition: border-color 0.25s ease-out, transform 0.25s ease-out;
   }
-  .other-card:hover {
-    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
-    transform: translateY(-3px);
-  }
+  .other-card:hover { border-color: color-mix(in srgb, var(--accent) 50%, transparent); transform: translateY(-3px); }
   .other-name { font-size: 22px; font-weight: 600; }
   .other-meta { font-size: 14px; color: var(--muted); }
   .other-go { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-top: 6px; }
 
   @media (max-width: 980px) {
     .cards-grid { grid-template-columns: 1fr; max-width: 560px; }
+    .quartier-inner { grid-template-columns: 1fr; gap: 36px; }
     .infos-grid { grid-template-columns: 1fr; gap: 46px; }
     .others-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 600px) {
-    .hero { padding: 150px 24px 88px; }
+    .hero { padding: 150px 24px 90px; }
     .hero-ctas { flex-direction: column; align-items: stretch; }
-    .intro { padding: 0 24px 70px; }
+    .intro { padding: 70px 24px 0; }
     .intro p { font-size: 17px; }
+    .quartier { padding: 60px 24px 70px; }
     .specialites, .commande, .infos { padding-left: 24px; padding-right: 24px; padding-bottom: 80px; }
     .others { padding: 60px 24px 80px; }
     .commande-inner { padding: 44px 26px; }

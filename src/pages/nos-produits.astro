@@ -1,0 +1,191 @@
+---
+import { Image } from "astro:assets";
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import { categories } from "../data/products";
+import { bakeries, SITE } from "../data/bakeries";
+import headerImg from "../assets/photos/viennoiseries-plateau.jpg";
+
+const title = "Nos produits — pains, viennoiseries et pâtisseries | MK Boulangeries";
+const description =
+  "Pains de tradition cuits sur place, viennoiseries pur beurre, pâtisseries françaises et orientales, snacking et formules du midi. Dans nos trois boulangeries à Nantes et Saint-Herblain.";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Produits des boulangeries MK",
+  itemListElement: categories.flatMap((cat, ci) =>
+    cat.items.map((item, ii) => ({
+      "@type": "ListItem",
+      position: ci * 100 + ii + 1,
+      item: {
+        "@type": "Product",
+        name: item.name,
+        description: item.desc,
+        category: cat.title,
+      },
+    })),
+  ),
+};
+
+const shopName = (slug: string) => bakeries.find((b) => b.slug === slug)?.name ?? slug;
+---
+
+<Base title={title} description={description} canonical="/nos-produits" jsonLd={jsonLd}>
+  <Nav current="produits" />
+
+  <header class="page-hero">
+    <div class="page-hero-media" data-parallax="0.14">
+      <Image src={headerImg} alt="Plateau de viennoiseries dorées sortant du four" widths={[760, 1400]} sizes="100vw" loading="eager" />
+    </div>
+    <div class="page-hero-overlay"></div>
+    <div class="page-hero-content" id="contenu">
+      <span class="surtitre">Nos produits</span>
+      <h1 class="serif">Tout ce qui sort<br /><span class="italic">de nos fournils</span></h1>
+      <p>
+        Les mêmes gammes dans les trois boulangeries, à quelques spécialités
+        près. Le pain est cuit au fil de la journée, les pâtisseries sont
+        préparées le matin même.
+      </p>
+    </div>
+  </header>
+
+  <nav class="cat-nav" aria-label="Catégories">
+    {categories.map((c) => <a href={`#${c.slug}`}>{c.title}</a>)}
+  </nav>
+
+  <main>
+    {categories.map((cat) => (
+      <section id={cat.slug} class="cat">
+        <div class="cat-head" data-reveal>
+          <h2 class="serif">{cat.title}</h2>
+          <p class="cat-lead">{cat.lead}</p>
+        </div>
+        <ul class="items">
+          {cat.items.map((item, i) => (
+            <li class="item" data-reveal style={`transition-delay:${Math.min(i, 5) * 0.05}s`}>
+              <div class="item-head">
+                <h3>{item.name}</h3>
+                {item.price && <span class="item-price">{item.price}</span>}
+              </div>
+              <p>{item.desc}</p>
+              {item.only && (
+                <span class="item-only">
+                  Uniquement à {item.only.map(shopName).join(", ")}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+
+    <section class="cta">
+      <div class="cta-inner" data-reveal>
+        <span class="diamond"></span>
+        <h2 class="serif">Envie de quelque chose en particulier&nbsp;?</h2>
+        <p>
+          Les quantités sont limitées et varient selon les jours. Un coup de fil
+          à la boulangerie la plus proche, et on vous met de côté ce qu'il faut.
+        </p>
+        <div class="cta-tels">
+          {bakeries.map((b) => (
+            <a href={b.phoneHref} class="cta-tel" style={`--accent:${b.accent}`} data-shop={b.slug} data-phone={b.phone}>
+              <span class="cta-tel-name">{b.name}</span>
+              <span class="cta-tel-num">{b.phone}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .page-hero {
+    position: relative; overflow: hidden; isolation: isolate;
+    padding: 190px 40px 100px; text-align: center;
+  }
+  .page-hero-media { position: absolute; inset: -12% 0 -12% 0; z-index: -2; will-change: transform; }
+  .page-hero-media :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .page-hero-overlay {
+    position: absolute; inset: 0; z-index: -1;
+    background:
+      radial-gradient(ellipse at 50% 45%, rgba(10, 14, 12, 0.55) 0%, rgba(10, 14, 12, 0.9) 72%),
+      linear-gradient(to bottom, rgba(14, 19, 16, 0.5) 0%, rgba(14, 19, 16, 0.25) 40%, var(--bg) 97%);
+  }
+  .page-hero-content { position: relative; max-width: 760px; margin: 0 auto; }
+  .page-hero h1 {
+    font-weight: 600; font-size: clamp(38px, 6.5vw, 74px);
+    line-height: 1.06; margin: 18px 0 24px;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.5);
+  }
+  .italic { font-style: italic; color: var(--accent); }
+  .page-hero p { font-size: 17px; line-height: 1.75; color: #cfc9bd; margin: 0; }
+
+  .cat-nav {
+    position: sticky; top: 62px; z-index: 20;
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    padding: 16px 24px;
+    background: rgba(14, 19, 16, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .cat-nav a {
+    font-size: 13px; letter-spacing: 0.4px;
+    padding: 9px 16px; border-radius: 40px;
+    border: 1px solid var(--line); color: var(--muted);
+    transition: border-color 0.2s ease-out, color 0.2s ease-out;
+  }
+  .cat-nav a:hover { border-color: var(--accent); color: var(--accent); }
+
+  .cat { max-width: 1100px; margin: 0 auto; padding: 80px 40px 0; }
+  .cat-head { max-width: 60ch; margin-bottom: 40px; }
+  .cat-head h2 { font-weight: 600; font-size: clamp(28px, 4.2vw, 42px); margin: 0 0 14px; }
+  .cat-lead { font-size: 16px; line-height: 1.8; color: var(--muted); margin: 0; }
+
+  .items { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .item { background: var(--surface); padding: 26px 30px; transition: background 0.25s ease-out; }
+  .item:hover { background: #1b221d; }
+  .item-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+  .item h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+  .item-price { font-family: "Playfair Display", serif; font-size: 17px; color: var(--accent); white-space: nowrap; }
+  .item p { font-size: 14px; line-height: 1.7; color: var(--muted); margin: 0; }
+  .item-only {
+    display: inline-block; margin-top: 12px;
+    font-size: 12px; letter-spacing: 0.6px; color: var(--accent);
+  }
+
+  .cta { padding: 100px 40px; text-align: center; }
+  .cta-inner {
+    max-width: 820px; margin: 0 auto; padding: 60px 44px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  }
+  .cta-inner h2 { font-weight: 600; font-size: clamp(26px, 4vw, 38px); margin: 24px 0 16px; }
+  .cta-inner > p { font-size: 16px; line-height: 1.75; color: var(--muted); margin: 0 auto 34px; max-width: 54ch; }
+  .cta-tels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .cta-tel {
+    display: flex; flex-direction: column; gap: 6px; padding: 18px 16px;
+    border: 1px solid var(--line); border-radius: 4px;
+    transition: border-color 0.25s ease-out;
+  }
+  .cta-tel:hover { border-color: var(--accent); }
+  .cta-tel-name { font-size: 13px; color: var(--muted); }
+  .cta-tel-num { font-family: "Playfair Display", serif; font-size: 19px; color: var(--accent); }
+
+  @media (max-width: 860px) {
+    .items { grid-template-columns: 1fr; }
+    .cta-tels { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .page-hero { padding: 150px 24px 80px; }
+    .cat-nav { top: 56px; padding: 12px 16px; }
+    .cat { padding: 60px 24px 0; }
+    .cta { padding: 80px 24px; }
+    .cta-inner { padding: 44px 26px; }
+    .item { padding: 22px 24px; }
+  }
+</style>

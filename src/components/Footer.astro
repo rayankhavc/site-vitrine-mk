@@ -9,18 +9,18 @@ const year = new Date().getFullYear();
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <a href="/" class="serif footer-logo">
-        MK <span class="footer-accent">Boulangeries</span>
-      </a>
+      <a href="/" class="serif footer-logo">MK <span class="footer-accent">Boulangeries</span></a>
       <p class="footer-tag">Trois boulangeries artisanales à Nantes et Saint-Herblain.</p>
+      <nav class="footer-links" aria-label="Pages du site">
+        <a href="/nos-produits">Nos produits</a>
+        <a href="/commandes">Commandes sur mesure</a>
+        <a href="/faq">Questions fréquentes</a>
+      </nav>
     </div>
 
     <nav class="footer-shops" aria-label="Nos boulangeries">
       {bakeries.map((b) => (
-        <a
-          href={`/${b.slug}`}
-          class={`footer-shop ${b.slug === current ? "is-current" : ""}`}
-        >
+        <a href={`/${b.slug}`} class={`footer-shop ${b.slug === current ? "is-current" : ""}`}>
           <span class="footer-shop-name">{b.name}</span>
           <span class="footer-shop-meta">{b.street} · {b.postalCode} {b.city}</span>
           <span class="footer-shop-tel">{b.phone}</span>
@@ -55,18 +55,22 @@ const year = new Date().getFullYear();
   .footer-logo { font-size: 22px; font-weight: 600; }
   .footer-accent { color: var(--accent); font-style: italic; }
   .footer-tag {
-    margin: 14px 0 0;
+    margin: 14px 0 20px;
     font-size: 14px;
     line-height: 1.7;
     color: var(--muted);
     max-width: 30ch;
   }
-
-  .footer-shops {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 28px;
+  .footer-links { display: flex; flex-direction: column; gap: 9px; }
+  .footer-links a {
+    font-size: 14px;
+    color: var(--muted);
+    width: fit-content;
+    transition: color 0.2s ease-out;
   }
+  .footer-links a:hover { color: var(--accent); }
+
+  .footer-shops { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
   .footer-shop {
     display: flex;
     flex-direction: column;
@@ -75,8 +79,7 @@ const year = new Date().getFullYear();
     border-top: 1px solid var(--line);
     transition: border-color 0.25s ease-out;
   }
-  .footer-shop:hover { border-top-color: var(--accent); }
-  .footer-shop.is-current { border-top-color: var(--accent); }
+  .footer-shop:hover, .footer-shop.is-current { border-top-color: var(--accent); }
   .footer-shop-name { font-size: 15px; font-weight: 500; }
   .footer-shop-meta { font-size: 13px; line-height: 1.6; color: var(--muted); }
   .footer-shop-tel { font-size: 13px; color: var(--accent); }

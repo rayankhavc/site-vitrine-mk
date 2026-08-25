@@ -1,9 +1,13 @@
 ---
+import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Status from "../components/Status.astro";
+import MessageButtons from "../components/MessageButtons.astro";
 import { bakeries, SITE, schemaHours } from "../data/bakeries";
+import heroImg from "../assets/photos/mains-pate.jpg";
+import savoirFaire from "../assets/photos/comptoir-boulangerie.jpg";
 
 const title = "MK Boulangeries — 3 boulangeries artisanales à Nantes et Saint-Herblain";
 const description =
@@ -25,18 +29,31 @@ const jsonLd = {
       addressLocality: b.city,
       addressCountry: "FR",
     },
+    geo: { "@type": "GeoCoordinates", latitude: b.geo.lat, longitude: b.geo.lng },
     openingHours: schemaHours(b.hours),
     servesCuisine: ["Boulangerie", "Pâtisserie", "Snacking"],
+    priceRange: "€",
   })),
 };
 ---
 
 <Base title={title} description={description} canonical="/" jsonLd={jsonLd}>
-  <Nav />
+  <Nav current="accueil" />
 
   <header class="hero">
+    <div class="hero-media" data-parallax="0.18">
+      <Image
+        src={heroImg}
+        alt="Mains d'un boulanger travaillant la pâte sur un plan fariné"
+        widths={[760, 1200, 1800]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
     <div class="hero-overlay"></div>
-    <div class="hero-content">
+
+    <div class="hero-content" id="contenu">
       <span class="hero-badge">Nantes · Saint-Herblain</span>
       <h1 class="serif">
         <span class="hero-word" style="animation-delay:.05s">Trois</span>
@@ -53,6 +70,8 @@ const jsonLd = {
       </p>
       <a href="#boulangeries" class="btn-primary hero-cta">Choisir ma boulangerie</a>
     </div>
+
+    <span class="scroll-hint" aria-hidden="true"></span>
   </header>
 
   <section id="boulangeries" class="shops">
@@ -68,8 +87,10 @@ const jsonLd = {
           style={`--accent:${b.accent}; --accent-soft:${b.accentSoft}; transition-delay:${i * 0.09}s`}
           data-reveal
         >
-          <a href={`/${b.slug}`} class="shop-link" aria-label={`Découvrir ${b.name}`}>
-            <span class="diamond diamond-lg"></span>
+          <a href={`/${b.slug}`} class="shop-photo" aria-hidden="true" tabindex="-1">
+            <Image src={b.hero} alt="" widths={[420, 760]} sizes="(max-width: 980px) 100vw, 380px" loading="lazy" />
+          </a>
+          <a href={`/${b.slug}`} class="shop-link">
             <h3 class="serif shop-name">{b.name}</h3>
             <p class="shop-district">{b.district}</p>
             <p class="shop-address">{b.street}<br />{b.postalCode} {b.city}</p>
@@ -78,22 +99,43 @@ const jsonLd = {
           </a>
 
           <div class="shop-actions">
-            <a
-              href={b.phoneHref}
-              class="shop-action shop-action-call"
-              data-shop={b.slug}
-              data-phone={b.phone}
-            >{b.phone}</a>
-            <a
-              href={b.mapsUrl}
-              target="_blank"
-              rel="noopener"
-              class="shop-action"
-              data-itineraire={b.slug}
-            >Itinéraire</a>
+            <a href={b.phoneHref} class="shop-action shop-action-call" data-shop={b.slug} data-phone={b.phone}>
+              {b.phone}
+            </a>
+            <a href={b.mapsUrl} target="_blank" rel="noopener" class="shop-action" data-itineraire={b.slug}>
+              Itinéraire
+            </a>
           </div>
         </article>
       ))}
+    </div>
+  </section>
+
+  <section class="craft">
+    <div class="craft-inner">
+      <div class="craft-media" data-reveal-img>
+        <Image
+          src={savoirFaire}
+          alt="Comptoir d'une boulangerie garni de pains et de viennoiseries"
+          widths={[600, 1000]}
+          sizes="(max-width: 900px) 100vw, 520px"
+          loading="lazy"
+        />
+      </div>
+      <div class="craft-text" data-reveal>
+        <span class="surtitre">Notre façon de faire</span>
+        <h2 class="serif">Du pain toute la journée, pas seulement le matin</h2>
+        <p>
+          Nos pains sont cuits au fil des heures plutôt qu'en une seule fournée.
+          C'est plus contraignant, mais c'est la seule manière de trouver une
+          baguette qui croustille encore à 18h comme à 8h.
+        </p>
+        <p>
+          Les pâtisseries — françaises et orientales — sont préparées chaque
+          matin, à la main, en quantité limitée. Quand c'est fini, c'est fini.
+        </p>
+        <a href="/nos-produits" class="btn-outline">Voir tout ce qu'on fait</a>
+      </div>
     </div>
   </section>
 
@@ -102,9 +144,16 @@ const jsonLd = {
       <span class="diamond"></span>
       <h2 class="serif">Une commande pour une occasion&nbsp;?</h2>
       <p>
-        Gâteaux d'anniversaire, plateaux de pâtisseries, commandes sur mesure :
-        appelez directement la boulangerie de votre choix, on s'occupe du reste.
+        Gâteaux d'anniversaire, plateaux de pâtisseries orientales, commandes sur
+        mesure. Appelez la boulangerie de votre choix, ou écrivez-nous — c'est
+        souvent plus simple pour détailler ce que vous voulez.
       </p>
+
+      <MessageButtons
+        message="Bonjour, je souhaite passer une commande."
+        shop="accueil"
+      />
+
       <div class="promise-tels">
         {bakeries.map((b) => (
           <a
@@ -130,39 +179,36 @@ const jsonLd = {
     from { opacity: 0; transform: translateY(28px); }
     to { opacity: 1; transform: none; }
   }
-  .hero-word {
-    display: inline-block;
-    opacity: 0;
-    animation: wordUp 0.6s ease-out forwards;
-  }
+  .hero-word { display: inline-block; opacity: 0; animation: wordUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
   .hero {
     position: relative;
     overflow: hidden;
-    padding: 190px 40px 120px;
-    background-color: var(--bg);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23C9A260' stroke-opacity='0.07' stroke-width='1'%3E%3Cpath d='M30 6 L36 24 L54 30 L36 36 L30 54 L24 36 L6 30 L24 24 Z'/%3E%3Cpath d='M30 16 L33 27 L44 30 L33 33 L30 44 L27 33 L16 30 L27 27 Z'/%3E%3Crect x='22' y='22' width='16' height='16' transform='rotate(45 30 30)'/%3E%3C/g%3E%3C/svg%3E");
-    background-size: 60px 60px;
+    padding: 200px 40px 130px;
+    background: var(--bg);
+    isolation: isolate;
   }
+  .hero-media { position: absolute; inset: -12% 0 -12% 0; z-index: -2; will-change: transform; }
+  .hero-media :global(img) { width: 100%; height: 100%; object-fit: cover; }
   .hero-overlay {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 50% 40%, rgba(14, 19, 16, 0) 0%, var(--bg) 76%);
-    pointer-events: none;
+    z-index: -1;
+    /* Deux couches : un voile général pour la lisibilité du texte, et un
+       dégradé vers le bas qui raccorde la photo au fond du site. */
+    background:
+      radial-gradient(ellipse at 50% 45%, rgba(10, 14, 12, 0.55) 0%, rgba(10, 14, 12, 0.88) 70%),
+      linear-gradient(to bottom, rgba(14, 19, 16, 0.5) 0%, rgba(14, 19, 16, 0.2) 40%, var(--bg) 97%);
   }
-  .hero-content {
-    position: relative;
-    max-width: 940px;
-    margin: 0 auto;
-    text-align: center;
-  }
+  .hero-content { position: relative; max-width: 940px; margin: 0 auto; text-align: center; }
   .hero-badge {
     display: inline-block;
     font-size: 12px;
     letter-spacing: 2.5px;
     text-transform: uppercase;
     color: var(--accent);
-    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    background: rgba(10, 14, 12, 0.35);
     border-radius: 40px;
     padding: 8px 22px;
     margin-bottom: 38px;
@@ -173,29 +219,35 @@ const jsonLd = {
     line-height: 1.04;
     letter-spacing: -0.5px;
     margin: 0 0 26px;
+    text-shadow: 0 2px 30px rgba(0, 0, 0, 0.5);
   }
   .hero-italic { font-style: italic; color: var(--accent); }
   .hero-sub {
     font-size: 17px;
     line-height: 1.75;
-    color: var(--muted);
+    color: #cfc9bd;
     max-width: 60ch;
     margin: 0 auto 40px;
   }
   .hero-cta { padding: 16px 36px; }
 
+  .scroll-hint {
+    position: absolute;
+    left: 50%;
+    bottom: 34px;
+    width: 1px;
+    height: 46px;
+    background: linear-gradient(to bottom, transparent, var(--accent));
+    transform: translateX(-50%);
+    animation: hintPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes hintPulse { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .scroll-hint { animation: none; } }
+
   /* ── Sélecteur de boulangerie ── */
-  .shops { padding: 20px 40px 100px; }
-  .section-header {
-    max-width: 1200px;
-    margin: 0 auto 56px;
-    text-align: center;
-  }
-  .section-header h2 {
-    font-weight: 600;
-    font-size: clamp(32px, 5vw, 50px);
-    margin: 18px 0 0;
-  }
+  .shops { padding: 90px 40px 100px; }
+  .section-header { max-width: 1200px; margin: 0 auto 56px; text-align: center; }
+  .section-header h2 { font-weight: 600; font-size: clamp(32px, 5vw, 50px); margin: 18px 0 0; }
 
   .shops-grid {
     max-width: 1200px;
@@ -209,65 +261,38 @@ const jsonLd = {
     flex-direction: column;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 5px;
+    border-radius: 6px;
     overflow: hidden;
-    transition: transform 0.3s ease-out, border-color 0.3s ease-out;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease-out;
   }
-  .shop-card:hover {
-    transform: translateY(-5px);
-    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  .shop-card:hover { transform: translateY(-6px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+
+  .shop-photo { display: block; height: 168px; overflow: hidden; }
+  .shop-photo :global(img) {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    filter: saturate(0.9) brightness(0.82);
   }
-  .shop-link {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 44px 36px 32px;
-  }
-  .shop-name {
-    font-size: 26px;
-    font-weight: 600;
-    margin: 0 0 8px;
-    line-height: 1.25;
-  }
+  .shop-card:hover .shop-photo :global(img) { transform: scale(1.06); filter: saturate(1) brightness(0.95); }
+
+  .shop-link { flex: 1; display: flex; flex-direction: column; align-items: flex-start; padding: 32px 34px 28px; }
+  .shop-name { font-size: 25px; font-weight: 600; margin: 0 0 8px; line-height: 1.25; }
   .shop-district {
-    font-size: 12px;
-    letter-spacing: 1.6px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin: 0 0 22px;
+    font-size: 12px; letter-spacing: 1.6px; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 20px;
   }
-  .shop-address {
-    font-size: 15px;
-    line-height: 1.7;
-    color: var(--muted);
-    margin: 0 0 20px;
-    flex: 1;
-  }
-  .shop-status { margin-bottom: 24px; }
+  .shop-address { font-size: 15px; line-height: 1.7; color: var(--muted); margin: 0 0 18px; flex: 1; }
+  .shop-status { margin-bottom: 22px; }
   .shop-more {
-    font-size: 13px;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: var(--accent);
-    border-bottom: 1px solid var(--accent);
-    padding-bottom: 3px;
+    font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--accent); border-bottom: 1px solid var(--accent); padding-bottom: 3px;
   }
 
-  .shop-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    border-top: 1px solid var(--line);
-  }
+  .shop-actions { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); }
   .shop-action {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 52px;
-    padding: 0 12px;
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 52px; padding: 0 12px;
+    font-size: 14px; font-weight: 500; text-align: center;
     color: var(--muted);
     transition: background 0.2s ease-out, color 0.2s ease-out;
   }
@@ -275,65 +300,57 @@ const jsonLd = {
   .shop-action:hover { background: rgba(255, 255, 255, 0.04); color: var(--ink); }
   .shop-action-call { color: var(--accent); }
 
-  /* ── Commandes ── */
-  .promise {
-    padding: 0 40px 110px;
-    text-align: center;
+  /* ── Savoir-faire ── */
+  .craft { padding: 0 40px 110px; }
+  .craft-inner {
+    max-width: 1140px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
   }
+  .craft-media { border-radius: 6px; overflow: hidden; }
+  .craft-media :global(img) { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+  .craft-text h2 { font-weight: 600; font-size: clamp(28px, 4vw, 42px); margin: 18px 0 22px; line-height: 1.15; }
+  .craft-text p { font-size: 16px; line-height: 1.8; color: var(--muted); margin: 0 0 18px; }
+  .craft-text .btn-outline { margin-top: 14px; }
+
+  /* ── Commandes ── */
+  .promise { padding: 0 40px 110px; text-align: center; }
   .promise-inner {
-    max-width: 860px;
-    margin: 0 auto;
+    max-width: 880px; margin: 0 auto;
     padding: 64px 44px;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 5px;
+    border-radius: 6px;
+    display: flex; flex-direction: column; align-items: center;
   }
-  .promise-inner h2 {
-    font-weight: 600;
-    font-size: clamp(28px, 4.4vw, 42px);
-    margin: 26px 0 18px;
-  }
-  .promise-inner > p {
-    font-size: 16px;
-    line-height: 1.75;
-    color: var(--muted);
-    max-width: 56ch;
-    margin: 0 auto 40px;
-  }
+  .promise-inner h2 { font-weight: 600; font-size: clamp(28px, 4.4vw, 42px); margin: 26px 0 18px; }
+  .promise-inner > p { font-size: 16px; line-height: 1.75; color: var(--muted); max-width: 58ch; margin: 0 auto 34px; }
+
   .promise-tels {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    margin-top: 38px; width: 100%;
+    padding-top: 34px; border-top: 1px solid var(--line);
   }
   .promise-tel {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    display: flex; flex-direction: column; gap: 6px;
     padding: 18px 16px;
-    border: 1px solid var(--line);
-    border-radius: 4px;
+    border: 1px solid var(--line); border-radius: 4px;
     transition: border-color 0.25s ease-out, background 0.25s ease-out;
   }
-  .promise-tel:hover {
-    border-color: var(--accent);
-    background: rgba(255, 255, 255, 0.03);
-  }
+  .promise-tel:hover { border-color: var(--accent); background: rgba(255, 255, 255, 0.03); }
   .promise-tel-name { font-size: 13px; color: var(--muted); }
-  .promise-tel-num {
-    font-family: "Playfair Display", serif;
-    font-size: 19px;
-    color: var(--accent);
-  }
+  .promise-tel-num { font-family: "Playfair Display", serif; font-size: 19px; color: var(--accent); }
 
   @media (max-width: 980px) {
     .shops-grid { grid-template-columns: 1fr; max-width: 560px; }
+    .craft-inner { grid-template-columns: 1fr; gap: 36px; }
     .promise-tels { grid-template-columns: 1fr; }
   }
   @media (max-width: 600px) {
-    .hero { padding: 150px 24px 90px; }
-    .shops { padding: 10px 24px 80px; }
+    .hero { padding: 150px 24px 100px; }
+    .shops { padding: 70px 24px 80px; }
+    .craft { padding: 0 24px 80px; }
     .promise { padding: 0 24px 80px; }
     .promise-inner { padding: 44px 26px; }
-    .shop-link { padding: 34px 26px 26px; }
+    .shop-link { padding: 28px 26px 24px; }
   }
 </style>
