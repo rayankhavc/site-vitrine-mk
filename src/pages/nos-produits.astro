@@ -11,21 +11,47 @@ const title = "Nos produits — pains, viennoiseries et pâtisseries | MK Boulan
 const description =
   "Pains de tradition cuits sur place, viennoiseries pur beurre, pâtisseries françaises et orientales, snacking et formules du midi. Dans nos trois boulangeries à Nantes et Saint-Herblain.";
 
+/**
+ * "1,10 €" -> 1.10, "3,80 € la part" -> 3.80.
+ * Renvoie null si le prix n'est pas encore connu : mieux vaut un produit
+ * sans offre dans les données structurées qu'un prix inventé, qu'un moteur
+ * de recherche ou un assistant citerait ensuite comme un fait.
+ */
+function priceValue(price?: string): number | null {
+  if (!price) return null;
+  const m = price.match(/(\d+),(\d{2})/);
+  return m ? Number(`${m[1]}.${m[2]}`) : null;
+}
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   name: "Produits des boulangeries MK",
   itemListElement: categories.flatMap((cat, ci) =>
-    cat.items.map((item, ii) => ({
-      "@type": "ListItem",
-      position: ci * 100 + ii + 1,
-      item: {
-        "@type": "Product",
-        name: item.name,
-        description: item.desc,
-        category: cat.title,
-      },
-    })),
+    cat.items.map((item, ii) => {
+      const value = priceValue(item.price);
+      return {
+        "@type": "ListItem",
+        position: ci * 100 + ii + 1,
+        item: {
+          "@type": "Product",
+          name: item.name,
+          description: item.desc,
+          category: cat.title,
+          ...(value !== null && {
+            offers: {
+              "@type": "Offer",
+              price: value,
+              priceCurrency: "EUR",
+              availability: "https://schema.org/InStock",
+              availableAtOrFrom: (item.only ?? bakeries.map((b) => b.slug)).map(
+                (slug) => ({ "@id": `${SITE.domain}/${slug}#bakery` }),
+              ),
+            },
+          }),
+        },
+      };
+    }),
   ),
 };
 

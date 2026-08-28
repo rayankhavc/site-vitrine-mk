@@ -51,8 +51,12 @@ src/pages/[slug].astro   une page par boulangerie, générée depuis les donnée
 src/pages/nos-produits.astro   catalogue complet
 src/pages/commandes.astro      commandes sur mesure et délais
 src/pages/faq.astro            questions fréquentes (données FAQPage)
+src/pages/mentions-legales.astro   éditeur, hébergeur, crédits
+src/pages/confidentialite.astro    données personnelles et cookies
+src/pages/robots.txt.ts        robots.txt généré (URL du sitemap correcte)
+src/pages/llms.txt.ts          résumé factuel généré pour les assistants IA
+src/layouts/LegalPage.astro    gabarit des pages légales
 src/assets/photos/       photos sources, converties en WebP au build
-public/llms.txt          résumé factuel du site pour les assistants IA
 ```
 
 ## Choix techniques
@@ -82,18 +86,46 @@ public/llms.txt          résumé factuel du site pour les assistants IA
   par seconde sur mobile.
 - **Coordonnées GPS réelles** relevées sur OpenStreetMap, présentes dans
   les données structurées de chaque boutique.
+- **Lisible par les robots des IA** : le site est en HTML statique, donc
+  GPTBot, ClaudeBot, PerplexityBot et consorts lisent tout le contenu sans
+  exécuter de JavaScript — c'est ce qui bloque la plupart des sites récents
+  construits côté navigateur. `robots.txt` les autorise nommément et
+  `llms.txt` leur donne un résumé factuel généré depuis les mêmes données
+  que les pages, pour qu'il ne puisse jamais contredire le site.
+- **Prix dans les données structurées** (`Offer`), pour les produits dont le
+  prix est connu. Ceux qui n'en ont pas sont publiés sans offre plutôt
+  qu'avec une estimation : un prix inventé serait ensuite cité comme un
+  fait par les moteurs et les assistants.
+
+## Adresse canonique du site
+
+Elle est déclarée **une seule fois**, dans `astro.config.mjs` (`SITE_URL`).
+Les balises `canonical`, le sitemap, `robots.txt`, `llms.txt` et les URL des
+données structurées en dérivent tous.
+
+Elle pointe actuellement vers `https://maisonkhalifa.vercel.app`. Le jour où
+`mkboulangeries.fr` est acheté et branché sur Vercel : changer cette ligne,
+et rien d'autre.
 
 ## Ce qui reste à faire
 
-1. **Les prix.** Le catalogue produits est volontairement sans prix : ils ne
-   m'ont pas été communiqués, et un prix inventé se retourne contre la
-   boutique au premier client. Le champ `price` de `src/data/products.ts`
-   est prêt à les recevoir.
-2. **Photos réelles** — voir `PHOTOS.md`. Les images actuelles sont des
+1. **Bandeau de consentement aux cookies.** Google Analytics dépose des
+   cookies ; la CNIL impose de recueillir l'accord du visiteur au préalable.
+   Le site n'a pas encore ce bandeau — la politique de confidentialité le
+   dit franchement et donne les moyens de refuser. À mettre en conformité,
+   soit par un bandeau, soit en passant à une mesure sans cookie.
+2. **Capital social et numéro de TVA** dans les mentions légales :
+   obligatoires pour une SAS, absents des données publiques, à reprendre du
+   Kbis. Un encart le signale sur la page.
+3. **Prix manquants** : viennoiseries, mille-feuille, paninis, quiches,
+   pains spéciaux. Ces produits s'affichent sans prix, ce qui est correct —
+   il suffit de renseigner leur champ `price` dans `src/data/products.ts`.
+4. **Photos réelles** — voir `PHOTOS.md`. Les images actuelles sont des
    photos d'ambiance libres de droit, pas les produits de la maison.
-3. **Fiches Google Business Profile** — le principal levier d'acquisition,
+5. **Fiches Google Business Profile** — le principal levier d'acquisition,
    davantage que le site lui-même. Notamment celle du Fournil du Sud, qui a
    très peu d'avis.
-4. **Domaine** `mkboulangeries.fr` à réserver et brancher sur Vercel. Tant
-   qu'il n'existe pas, les balises `canonical` pointent vers une adresse
-   introuvable et le référencement ne peut pas démarrer.
+6. **Vérifier les entités juridiques** des deux Fournils : les données
+   publiques ne rattachent qu'un établissement ouvert à la SAS MK. Si les
+   deux autres relèvent d'autres sociétés, les mentions légales devront le
+   refléter.

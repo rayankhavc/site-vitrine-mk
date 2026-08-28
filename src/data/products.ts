@@ -1,11 +1,11 @@
 /**
  * Catalogue produits.
  *
- * ⚠ LES PRIX SONT VOLONTAIREMENT ABSENTS. Personne ne me les a donnés, et
- * un prix inventé sur un site de commerce se retourne contre la boutique
- * dès le premier client qui arrive au comptoir. Le champ `price` est prêt :
- * dès que le gérant donne ses tarifs, on les ajoute ici et ils s'affichent
- * partout, y compris dans les données structurées.
+ * Les prix viennent du gérant. Quelques-uns manquent encore (viennoiseries,
+ * mille-feuille, paninis, quiches, pains spéciaux) : ils restent sans prix
+ * plutôt qu'estimés. Un prix inventé sur un site de commerce se retourne
+ * contre la boutique dès le premier client au comptoir — mieux vaut une
+ * ligne sans prix qu'une ligne fausse.
  */
 
 export type Product = {
@@ -31,12 +31,12 @@ export const categories: ProductCategory[] = [
     lead:
       "Cuits au fil de la journée plutôt qu'en une seule fournée : à 8h comme à 18h, il reste du pain sorti du four il y a peu.",
     items: [
-      { name: "Baguette de tradition", desc: "Farine sans additif, façonnée à la main, mie alvéolée et croûte fine." },
-      { name: "Baguette blanche", desc: "La baguette de tous les jours, croustillante et régulière." },
-      { name: "Pain de campagne", desc: "Une pointe de seigle, mie dense et goût légèrement acidulé. Se garde plusieurs jours." },
-      { name: "Pain complet", desc: "Farine complète, riche en fibres, pour les tartines du matin." },
-      { name: "Pain aux céréales", desc: "Mélange de graines — tournesol, lin, sésame — pour un pain nourrissant." },
-      { name: "Pain viennois", desc: "Mie douce et sucrée, la préférée des enfants au goûter." },
+      { name: "Baguette de tradition", desc: "Farine sans additif, façonnée à la main, mie alvéolée et croûte fine.", price: "1,10 €" },
+      { name: "Baguette blanche", desc: "La baguette de tous les jours, croustillante et régulière.", price: "1,00 €" },
+      { name: "Pain de campagne", desc: "Une pointe de seigle, mie dense et goût légèrement acidulé. Se garde plusieurs jours.", price: "2,00 €" },
+      { name: "Pain complet", desc: "Farine complète, riche en fibres, pour les tartines du matin.", price: "2,20 €" },
+      { name: "Pain aux céréales", desc: "Mélange de graines — tournesol, lin, sésame — pour un pain nourrissant.", price: "2,20 €" },
+      { name: "Pain viennois", desc: "Mie douce et sucrée, la préférée des enfants au goûter.", price: "2,50 €" },
       { name: "Pains spéciaux", desc: "Selon les jours : olives, noix, lardons, ou pain de mie maison." },
     ],
   },
@@ -49,7 +49,7 @@ export const categories: ProductCategory[] = [
       { name: "Pain au chocolat", desc: "Deux barres de chocolat dans un feuilletage doré." },
       { name: "Pain aux raisins", desc: "Crème pâtissière et raisins, roulé en escargot." },
       { name: "Chausson aux pommes", desc: "Compote maison dans un feuilletage croustillant." },
-      { name: "Brioche", desc: "Nature ou aux pépites, moelleuse et beurrée." },
+      { name: "Brioche", desc: "Nature ou aux pépites, moelleuse et beurrée.", price: "6,00 €" },
     ],
   },
   {
@@ -57,12 +57,12 @@ export const categories: ProductCategory[] = [
     title: "Pâtisseries françaises",
     lead: "Préparées chaque matin au laboratoire, en quantité limitée.",
     items: [
-      { name: "Éclair", desc: "Chocolat ou café, crème pâtissière maison." },
+      { name: "Éclair", desc: "Chocolat ou café, crème pâtissière maison.", price: "2,50 €" },
       { name: "Mille-feuille", desc: "Trois feuilletages, crème vanille, glaçage marbré." },
-      { name: "Tarte au citron meringuée", desc: "Citron franc et meringue légèrement dorée." },
-      { name: "Flan pâtissier", desc: "Épais et vanillé, cuit en grande plaque." },
-      { name: "Entremets", desc: "Selon la saison, à la part ou en format à partager." },
-      { name: "Tartes aux fruits", desc: "Fraise, framboise, pomme, selon l'arrivage." },
+      { name: "Tarte au citron meringuée", desc: "Citron franc et meringue légèrement dorée.", price: "3,00 €" },
+      { name: "Flan pâtissier", desc: "Épais et vanillé, cuit en grande plaque.", price: "2,50 €" },
+      { name: "Entremets", desc: "Selon la saison, à la part ou en format à partager.", price: "3,80 € la part" },
+      { name: "Tartes aux fruits", desc: "Fraise, framboise, pomme, selon l'arrivage.", price: "2,80 €" },
     ],
   },
   {
@@ -71,9 +71,9 @@ export const categories: ProductCategory[] = [
     lead:
       "Notre spécialité, façonnée à la main selon la tradition, au miel, aux amandes et à la fleur d'oranger.",
     items: [
-      { name: "Cornes de gazelle", desc: "Pâte fine garnie de pâte d'amande parfumée à la fleur d'oranger." },
-      { name: "Baklawa", desc: "Feuilles de brick, amandes ou pistaches, sirop de miel." },
-      { name: "Makrout", desc: "Semoule et pâte de dattes, frit puis trempé dans le miel." },
+      { name: "Cornes de gazelle", desc: "Pâte fine garnie de pâte d'amande parfumée à la fleur d'oranger.", price: "1,50 €" },
+      { name: "Baklawa", desc: "Feuilles de brick, amandes ou pistaches, sirop de miel.", price: "1,50 €" },
+      { name: "Makrout", desc: "Semoule et pâte de dattes, frit puis trempé dans le miel.", price: "1,50 €" },
       { name: "Assortiments", desc: "Plateaux mélangés à emporter, pour un dessert ou un cadeau." },
     ],
   },
@@ -82,10 +82,13 @@ export const categories: ProductCategory[] = [
     title: "Snacking & formules du midi",
     lead: "Préparés sur place avec nos pains, à emporter pour la pause déjeuner.",
     items: [
-      { name: "Sandwichs garnis", desc: "Sur baguette tradition, préparés dans la matinée." },
+      { name: "Sandwich froid", desc: "Sur baguette tradition, préparé dans la matinée.", price: "4,50 €" },
+      { name: "Formule sandwich froid", desc: "Un sandwich froid et une boisson.", price: "6,00 €" },
+      { name: "Formule du midi", desc: "Un plat chaud, une boisson et un dessert.", price: "8,00 €" },
+      { name: "Sandwich chaud", desc: "Servi avec des frites et une boisson.", price: "8,00 €" },
       { name: "Paninis", desc: "Chauds, préparés à la commande." },
-      { name: "Pizzas", desc: "À la part ou entières.", only: ["au-fournil-du-sud"] },
-      { name: "Formule du midi", desc: "Sandwich ou panini, boisson et dessert." },
+      { name: "Pizza margherita", desc: "À la part ou entière.", price: "8,90 €", only: ["au-fournil-du-sud"] },
+      { name: "Autres pizzas", desc: "Selon la garniture.", price: "9,90 €", only: ["au-fournil-du-sud"] },
       { name: "Quiches et tartes salées", desc: "Selon les jours, à emporter chaud ou froid." },
     ],
   },

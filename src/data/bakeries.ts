@@ -18,7 +18,12 @@ import croissantFarine from "../assets/photos/croissant-farine.jpg";
 
 export const SITE = {
   name: "MK Boulangeries",
-  domain: "https://mkboulangeries.fr",
+  /**
+   * Reprise de `site` dans astro.config.mjs, jamais réécrite ici : deux
+   * adresses canoniques qui divergent, c'est la garantie de balises
+   * canonical fausses le jour où le domaine change.
+   */
+  domain: (import.meta.env.SITE ?? "https://maisonkhalifa.vercel.app").replace(/\/$/, ""),
   ga: "G-MFFMYTCF6R",
   legalName: "MK",
   /** Ligne mobile qui reçoit les commandes écrites (WhatsApp et SMS). */

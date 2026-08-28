@@ -1,0 +1,153 @@
+---
+import LegalPage from "../layouts/LegalPage.astro";
+import { SITE } from "../data/bakeries";
+---
+
+<LegalPage
+  title="Politique de confidentialité | MK Boulangeries"
+  description="Quelles données ce site collecte, pourquoi, combien de temps, et comment exercer vos droits."
+  canonical="/confidentialite"
+  heading="Politique de confidentialité"
+  lead="Ce que ce site collecte, pourquoi, et comment vous y opposer. Écrit pour être compris, pas pour être long."
+  updated="août 2026"
+>
+  <section>
+    <h2>En résumé</h2>
+    <p>
+      Ce site est une vitrine. Il ne vend rien en ligne, ne comporte aucun
+      formulaire et ne crée aucun compte. <strong>Vous pouvez le consulter
+      entièrement sans jamais nous transmettre la moindre information vous
+      concernant.</strong>
+    </p>
+    <p>
+      Deux exceptions, détaillées plus bas : un outil de mesure d'audience, et
+      le cas où vous choisissez vous-même de nous téléphoner ou de nous écrire.
+    </p>
+  </section>
+
+  <section>
+    <h2>Responsable du traitement</h2>
+    <p>
+      MK, SAS, 51 rue du Corps de Garde, 44100 Nantes — SIREN 904 780 517.
+      Contact : {SITE.contactMobile}.
+    </p>
+  </section>
+
+  <section>
+    <h2>Mesure d'audience</h2>
+    <p>
+      Ce site utilise <strong>Google Analytics 4</strong> pour savoir combien
+      de personnes le consultent, quelles pages elles regardent, et si elles
+      cliquent sur les boutons « Appeler », « Itinéraire » et « Écrire ». Cela
+      nous sert à savoir si le site est utile, et à rien d'autre.
+    </p>
+    <p>
+      Nous ne consultons que des statistiques agrégées : nous ne cherchons pas
+      à savoir qui vous êtes, et nous ne recoupons ces données avec aucune
+      autre source.
+    </p>
+    <h3>Ce que cela implique</h3>
+    <ul>
+      <li>
+        Google Analytics dépose des <strong>cookies</strong> sur votre appareil
+        et enregistre votre adresse IP de façon tronquée.
+      </li>
+      <li>
+        Ces données sont traitées par Google, ce qui peut impliquer un
+        transfert hors de l'Union européenne.
+      </li>
+      <li>Elles sont conservées quatorze mois, puis supprimées.</li>
+    </ul>
+
+    <div class="legal-todo">
+      <p>
+        <strong>Information importante :</strong> ce site ne présente pas
+        encore de bandeau de consentement aux cookies. La réglementation
+        française impose de recueillir votre accord avant tout dépôt de cookie
+        de mesure d'audience non exempté. Cette mise en conformité est prévue.
+        En attendant, vous pouvez refuser cette mesure par les moyens
+        ci-dessous, qui sont pleinement efficaces.
+      </p>
+    </div>
+
+    <h3>Comment refuser</h3>
+    <ul>
+      <li>
+        Installez le
+        <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener">
+          module de désactivation de Google Analytics
+        </a>, qui bloque la mesure sur tous les sites que vous visitez.
+      </li>
+      <li>
+        Ou bloquez les cookies tiers dans les réglages de votre navigateur, ou
+        activez son mode de protection renforcée contre le pistage.
+      </li>
+    </ul>
+    <p>Le site fonctionne normalement dans tous les cas.</p>
+  </section>
+
+  <section>
+    <h2>Si vous nous contactez</h2>
+    <h3>Par téléphone</h3>
+    <p>
+      Nous ne conservons aucun enregistrement ni fichier de vos appels. Votre
+      numéro apparaît sur le téléphone de la boulangerie, comme pour n'importe
+      quel appel.
+    </p>
+    <h3>Par WhatsApp ou par SMS</h3>
+    <p>
+      Les boutons « Écrire » ouvrent votre propre application de messagerie
+      avec un message pré-rempli. <strong>Rien n'est envoyé tant que vous
+      n'appuyez pas sur « envoyer »</strong>, et le message ne transite pas par
+      ce site.
+    </p>
+    <p>
+      Si vous nous écrivez, nous conservons la conversation le temps de traiter
+      votre demande, puis le temps nécessaire au suivi de la commande. Les
+      messages WhatsApp transitent par les serveurs de Meta, soumis à sa propre
+      politique de confidentialité ; les SMS transitent par votre opérateur.
+    </p>
+  </section>
+
+  <section>
+    <h2>Services externes</h2>
+    <p>
+      Certaines pages chargent des ressources hébergées par des tiers, qui
+      reçoivent de ce fait votre adresse IP :
+    </p>
+    <ul>
+      <li><strong>Google Fonts</strong> — polices de caractères du site.</li>
+      <li><strong>Google Analytics</strong> — mesure d'audience, décrite ci-dessus.</li>
+    </ul>
+    <p>
+      Les liens vers Google Maps et vers les avis Google ouvrent des sites
+      tiers, régis par les politiques de confidentialité de Google. Aucune
+      carte n'est intégrée dans nos pages : rien n'est chargé depuis Google
+      Maps tant que vous ne cliquez pas.
+    </p>
+  </section>
+
+  <section>
+    <h2>Vos droits</h2>
+    <p>
+      Vous disposez d'un droit d'accès, de rectification, d'effacement, de
+      limitation et d'opposition sur les données vous concernant, ainsi que
+      d'un droit à la portabilité. Pour l'exercer, écrivez-nous au
+      {SITE.contactMobile} ou adressez un courrier au siège social.
+    </p>
+    <p>
+      Si notre réponse ne vous satisfait pas, vous pouvez saisir la
+      <a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a>,
+      autorité française de protection des données.
+    </p>
+  </section>
+
+  <section>
+    <h2>Modifications</h2>
+    <p>
+      Cette politique peut évoluer, notamment lors de la mise en place du
+      bandeau de consentement. La date de dernière mise à jour figure en haut
+      de cette page.
+    </p>
+  </section>
+</LegalPage>

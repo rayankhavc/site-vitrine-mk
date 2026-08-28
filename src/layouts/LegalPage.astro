@@ -1,0 +1,113 @@
+---
+import Base from "./Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  heading: string;
+  lead: string;
+  updated: string;
+}
+
+const { title, description, canonical, heading, lead, updated } = Astro.props;
+---
+
+<Base title={title} description={description} canonical={canonical}>
+  <Nav />
+
+  <header class="legal-head" id="contenu">
+    <span class="surtitre">Informations légales</span>
+    <h1 class="serif">{heading}</h1>
+    <p class="legal-lead">{lead}</p>
+    <p class="legal-updated">Dernière mise à jour : {updated}</p>
+  </header>
+
+  <main class="legal-body">
+    <slot />
+  </main>
+
+  <Footer />
+</Base>
+
+<style is:global>
+  .legal-head {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 170px 40px 50px;
+  }
+  .legal-head h1 {
+    font-weight: 600;
+    font-size: clamp(34px, 5.5vw, 58px);
+    line-height: 1.1;
+    margin: 18px 0 22px;
+  }
+  .legal-lead { font-size: 17px; line-height: 1.75; color: var(--muted); margin: 0 0 16px; }
+  .legal-updated { font-size: 13px; color: var(--muted); margin: 0; opacity: 0.75; }
+
+  .legal-body {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 40px 110px;
+  }
+  .legal-body section { padding-top: 46px; }
+  .legal-body h2 {
+    font-family: "Playfair Display", serif;
+    font-weight: 600;
+    font-size: 26px;
+    margin: 0 0 18px;
+  }
+  .legal-body h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 26px 0 10px;
+    color: var(--ink);
+  }
+  .legal-body p,
+  .legal-body li {
+    font-size: 15px;
+    line-height: 1.85;
+    color: var(--muted);
+  }
+  .legal-body p { margin: 0 0 14px; }
+  .legal-body ul { margin: 0 0 14px; padding-left: 20px; }
+  .legal-body li { margin-bottom: 8px; }
+  .legal-body a { color: var(--accent); border-bottom: 1px solid transparent; transition: border-color 0.2s ease-out; }
+  .legal-body a:hover { border-bottom-color: var(--accent); }
+  .legal-body strong { color: var(--ink); font-weight: 600; }
+
+  /* Fiche d'identité : une définition par ligne, lisible en diagonale. */
+  .legal-facts {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 10px 28px;
+    margin: 0;
+    padding: 26px 30px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  .legal-facts dt { font-size: 13px; color: var(--muted); letter-spacing: 0.3px; }
+  .legal-facts dd { font-size: 15px; margin: 0; color: var(--ink); }
+
+  /* Encart d'avertissement : ce qui reste à compléter par le gérant. */
+  .legal-todo {
+    margin: 24px 0 0;
+    padding: 20px 24px;
+    border-left: 2px solid var(--closed);
+    background: rgba(224, 96, 96, 0.06);
+    border-radius: 0 4px 4px 0;
+  }
+  .legal-todo p { margin: 0; font-size: 14px; line-height: 1.75; color: var(--ink); }
+  .legal-todo strong { color: var(--closed); }
+
+  @media (max-width: 640px) {
+    .legal-head { padding: 140px 24px 40px; }
+    .legal-body { padding: 0 24px 80px; }
+    .legal-facts { grid-template-columns: 1fr; gap: 4px 0; padding: 22px 22px; }
+    .legal-facts dt { margin-top: 12px; }
+    .legal-facts dt:first-child { margin-top: 0; }
+  }
+</style>

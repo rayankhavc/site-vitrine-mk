@@ -1,0 +1,125 @@
+---
+import LegalPage from "../layouts/LegalPage.astro";
+import { bakeries, SITE } from "../data/bakeries";
+---
+
+<LegalPage
+  title="Mentions légales | MK Boulangeries"
+  description="Mentions légales du site MK Boulangeries : éditeur, hébergeur, propriété intellectuelle et crédits photographiques."
+  canonical="/mentions-legales"
+  heading="Mentions légales"
+  lead="Les informations légales relatives à ce site et à la société qui l'édite."
+  updated="août 2026"
+>
+  <section>
+    <h2>Éditeur du site</h2>
+    <dl class="legal-facts">
+      <dt>Raison sociale</dt>
+      <dd>MK</dd>
+      <dt>Enseigne</dt>
+      <dd>MK Boulangerie &amp; Pâtisserie</dd>
+      <dt>Forme juridique</dt>
+      <dd>Société par actions simplifiée (SAS)</dd>
+      <dt>Siège social</dt>
+      <dd>51 rue du Corps de Garde, 44100 Nantes, France</dd>
+      <dt>SIREN</dt>
+      <dd>904 780 517</dd>
+      <dt>SIRET (siège)</dt>
+      <dd>904 780 517 00028</dd>
+      <dt>RCS</dt>
+      <dd>Nantes 904 780 517</dd>
+      <dt>Code APE</dt>
+      <dd>10.71C — Boulangerie et boulangerie-pâtisserie</dd>
+      <dt>Directeur de la publication</dt>
+      <dd>Thameur Khalifa, président</dd>
+      <dt>Téléphone</dt>
+      <dd>09 81 72 45 22</dd>
+    </dl>
+
+    <div class="legal-todo">
+      <p>
+        <strong>À compléter avant publication définitive :</strong> le montant
+        du capital social et le numéro de TVA intracommunautaire sont
+        obligatoires dans les mentions légales d'une SAS. Ils ne figuraient pas
+        dans les données publiques consultées et doivent être repris du Kbis.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Nos établissements</h2>
+    <p>
+      Ce site présente trois boulangeries. Les informations de contact de
+      chacune figurent sur sa page :
+    </p>
+    <ul>
+      {bakeries.map((b) => (
+        <li>
+          <a href={`/${b.slug}`}>{b.name}</a> — {b.street}, {b.postalCode}{" "}
+          {b.city} · {b.phone}
+        </li>
+      ))}
+    </ul>
+    <p>
+      Les commandes écrites sont reçues au {SITE.contactMobile}, par WhatsApp
+      ou par SMS.
+    </p>
+  </section>
+
+  <section>
+    <h2>Hébergement</h2>
+    <p>
+      Le site est hébergé par <strong>Vercel Inc.</strong>, 340 S Lemon Ave
+      #4133, Walnut, CA 91789, États-Unis —
+      <a href="https://vercel.com" target="_blank" rel="noopener">vercel.com</a>.
+    </p>
+  </section>
+
+  <section>
+    <h2>Propriété intellectuelle</h2>
+    <p>
+      L'ensemble de ce site — structure, textes, mise en page et éléments
+      graphiques — est protégé par le droit d'auteur. Toute reproduction ou
+      représentation, totale ou partielle, sans autorisation écrite préalable
+      est interdite.
+    </p>
+    <p>
+      Les noms et enseignes « MK Boulangerie &amp; Pâtisserie », « Au Fournil
+      du Sillon » et « Au Fournil du Sud » sont la propriété de leurs
+      titulaires respectifs.
+    </p>
+  </section>
+
+  <section>
+    <h2>Crédits photographiques</h2>
+    <p>
+      Les photographies d'ambiance actuellement utilisées proviennent de la
+      banque d'images
+      <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>,
+      dont la licence autorise l'usage commercial sans attribution.
+    </p>
+    <p>
+      Ces images illustrent le métier de boulanger et ne représentent pas les
+      produits ni les boutiques de la maison. Elles seront remplacées par des
+      photographies des établissements.
+    </p>
+  </section>
+
+  <section>
+    <h2>Données personnelles</h2>
+    <p>
+      Le traitement des données personnelles et l'usage des cookies sont
+      détaillés dans notre
+      <a href="/confidentialite">politique de confidentialité</a>.
+    </p>
+  </section>
+
+  <section>
+    <h2>Signaler une erreur</h2>
+    <p>
+      Une information inexacte sur ce site — un horaire, une adresse, un prix ?
+      Écrivez-nous au {SITE.contactMobile} ou appelez la boulangerie
+      concernée, nous corrigerons.
+    </p>
+  </section>
+</LegalPage>
