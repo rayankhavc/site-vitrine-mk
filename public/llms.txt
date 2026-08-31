@@ -16,20 +16,20 @@
 - Adresse : 51 rue du Corps de Garde, 44100 Nantes
 - Quartier : Dervallières – Zola
 - Téléphone : 09 81 72 45 22
-- Page : https://mkboulangeries.fr/mk-nantes
+- Page : https://maisonkhalifa.vercel.app/mk-nantes
 
 ### Au Fournil du Sillon — Saint-Herblain
 - Adresse : 13 place des Thébaudières, 44800 Saint-Herblain
 - Quartier : Les Thébaudières, au pied du Sillon de Bretagne
 - Téléphone : 09 73 60 10 07
-- Page : https://mkboulangeries.fr/au-fournil-du-sillon
+- Page : https://maisonkhalifa.vercel.app/au-fournil-du-sillon
 
 ### Au Fournil du Sud — Saint-Herblain
 - Adresse : 1 boulevard Salvador Allende, 44800 Saint-Herblain
 - Quartier : La Harlière
 - Téléphone : 02 28 03 12 42
 - Spécificité : la plus tournée vers le snacking, propose des pizzas.
-- Page : https://mkboulangeries.fr/au-fournil-du-sud
+- Page : https://maisonkhalifa.vercel.app/au-fournil-du-sud
 
 ## Ce que proposent les trois boulangeries
 
@@ -40,7 +40,7 @@ et formules du midi à emporter.
 
 ## Pages
 
-- Accueil : https://mkboulangeries.fr/
-- Nos produits : https://mkboulangeries.fr/nos-produits
-- Commandes sur mesure : https://mkboulangeries.fr/commandes
-- Questions fréquentes : https://mkboulangeries.fr/faq
+- Accueil : https://maisonkhalifa.vercel.app/
+- Nos produits : https://maisonkhalifa.vercel.app/nos-produits
+- Commandes sur mesure : https://maisonkhalifa.vercel.app/commandes
+- Questions fréquentes : https://maisonkhalifa.vercel.app/faq

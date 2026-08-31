@@ -18,7 +18,16 @@ import croissantFarine from "../assets/photos/croissant-farine.jpg";
 
 export const SITE = {
   name: "MK Boulangeries",
-  domain: "https://mkboulangeries.fr",
+  /**
+   * Adresse qui fait autorité, celle des canoniques, des données Google et
+   * du plan du site. Provisoirement l'adresse Vercel : tant que
+   * mkboulangeries.fr n'est pas réservé, une canonique vers ce domaine
+   * pointe vers un hôte qui ne résout pas, et le site ne peut pas être
+   * indexé du tout. Le jour où le domaine est acheté et branché sur le
+   * projet Vercel, remettre "https://mkboulangeries.fr" ici et dans
+   * astro.config.mjs, public/robots.txt et public/llms.txt.
+   */
+  domain: "https://maisonkhalifa.vercel.app",
   ga: "G-MFFMYTCF6R",
   legalName: "MK",
   /** Ligne mobile qui reçoit les commandes écrites (WhatsApp et SMS). */

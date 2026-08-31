@@ -1,4 +1,4 @@
-# MK Boulangeries — mkboulangeries.fr
+# MK Boulangeries
 
 Site des trois boulangeries : **MK Boulangerie & Pâtisserie** (Nantes),
 **Au Fournil du Sillon** et **Au Fournil du Sud** (Saint-Herblain).
@@ -94,6 +94,19 @@ public/llms.txt          résumé factuel du site pour les assistants IA
 3. **Fiches Google Business Profile** — le principal levier d'acquisition,
    davantage que le site lui-même. Notamment celle du Fournil du Sud, qui a
    très peu d'avis.
-4. **Domaine** `mkboulangeries.fr` à réserver et brancher sur Vercel. Tant
-   qu'il n'existe pas, les balises `canonical` pointent vers une adresse
-   introuvable et le référencement ne peut pas démarrer.
+4. **Domaine** `mkboulangeries.fr` à réserver et brancher sur Vercel.
+
+   En attendant, l'adresse qui fait autorité est celle du déploiement,
+   `https://maisonkhalifa.vercel.app` : canoniques, Open Graph, données
+   structurées, plan du site, `robots.txt` et `llms.txt` en découlent. Une
+   canonique vers un domaine qui ne résout pas ne retarde pas
+   l'indexation, elle l'empêche : Google ne peut pas atteindre l'adresse
+   qu'on lui désigne comme la bonne.
+
+   Le jour où le domaine est acheté et branché sur le projet Vercel,
+   quatre endroits à corriger, et rien d'autre : `SITE.domain` dans
+   `src/data/bakeries.ts`, `site` dans `astro.config.mjs`, la ligne
+   `Sitemap:` de `public/robots.txt`, et les URL de `public/llms.txt`.
+   Penser aussi à faire pointer les redirections des deux anciens sites
+   Fournil vers ce domaine, et à mettre à jour l'étude de cas
+   `mk-boulangeries` du portfolio.
