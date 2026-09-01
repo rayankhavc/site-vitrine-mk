@@ -34,6 +34,9 @@ const year = new Date().getFullYear();
   <div class="footer-base">
     <span>© {year} {SITE.legalName} · Nantes &amp; Saint-Herblain</span>
     <span>Ouvert tous les jours de 6h à 20h, sauf le vendredi</span>
+    <span class="footer-credit">
+      Site conçu et réalisé par <a href="https://raythan.fr" target="_blank" rel="noopener">Raythan Web Design</a>
+    </span>
   </div>
 </footer>
 
@@ -98,6 +101,16 @@ const year = new Date().getFullYear();
     font-size: 13px;
     color: var(--muted);
   }
+
+  /* Crédit agence. Lien suivi volontairement (rel sans nofollow) : c'est un
+     lien éditorial légitime entre le site livré et son auteur. */
+  .footer-credit a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease-out;
+  }
+  .footer-credit a:hover { color: var(--accent); }
 
   @media (max-width: 900px) {
     .footer-inner { grid-template-columns: 1fr; gap: 40px; }
